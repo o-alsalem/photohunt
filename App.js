@@ -99,11 +99,11 @@ export default function App() {
   const checkProximityAndShowPopup = () => {
     for (const marker of userMissions.flatMap((mission) => mission.markers)) {
       if (marker && !shownMarkers[marker.id]) {
-        // Check if marker ID is not in shownMarkers
         const distance = calculateDistance(userLocation, marker.coordinate);
         console.log(`Distance to marker: ${distance}`);
-        if (missionStarted && distance < 0.1) {
+        if (missionStarted === true && distance < 1) {
           console.log("Popup should show");
+          console.log(missionStarted + " Mission has started");
           setPopupMarker(marker);
           setShowArrivedPopup(true);
           setShownMarkers((prevShownMarkers) => ({
@@ -113,8 +113,6 @@ export default function App() {
 
           updateAchievements("Explorer");
           updateAchievements("Speed Runner");
-
-          return;
         }
       }
     }
@@ -122,7 +120,7 @@ export default function App() {
 
   useEffect(() => {
     // Reset shownMarkers when user's location changes
-    setShownMarkers([]);
+    setShownMarkers({}); // Reset to empty object
     checkProximityAndShowPopup();
   }, [userLocation]);
 
@@ -150,7 +148,6 @@ export default function App() {
     return distance;
   }
 
-  // Add this function to your useEffect to check proximity
   useEffect(() => {
     // Check proximity when the user's location changes
     checkProximityAndShowPopup();
@@ -620,9 +617,6 @@ export default function App() {
           </TouchableOpacity>
         </View>
       )}
-      {/* Slider */}
-
-      {/* Slider END*/}
       <View
         style={[
           styles.header,
