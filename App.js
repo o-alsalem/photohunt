@@ -150,13 +150,6 @@ export default function App() {
     return distance;
   }
 
-  // Example usage
-  const coord1 = { latitude: 40.7128, longitude: -74.006 };
-  const coord2 = { latitude: 34.0522, longitude: -118.2437 };
-
-  const distance = calculateDistance(coord1, coord2);
-  console.log(`Distance between coordinates: ${distance} km`);
-
   // Add this function to your useEffect to check proximity
   useEffect(() => {
     // Check proximity when the user's location changes
