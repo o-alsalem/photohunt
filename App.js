@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react"; // Import useState
-import MapView, { Marker, Polyline } from "react-native-maps";
+import MapView, { Marker, Polyline, Circle } from "react-native-maps";
 import ImagePicker from "react-native-image-picker";
 
 import MapViewDirections from "react-native-maps-directions";
@@ -97,13 +97,22 @@ export default function App() {
   const [missionStarted, setMissionStarted] = useState(false);
 
   const checkProximityAndShowPopup = () => {
-    for (const marker of userMissions.flatMap((mission) => mission.markers)) {
+    if (!selectedMissionId) return; // No selected mission, do nothing
+
+    const selectedMission = userMissions.find(
+      (mission) => mission.id === selectedMissionId
+    );
+
+    if (!selectedMission) return; // Selected mission not found, do nothing
+
+    for (const marker of selectedMission.markers) {
       if (marker && !shownMarkers[marker.id]) {
         const distance = calculateDistance(userLocation, marker.coordinate);
         console.log(`Distance to marker: ${distance}`);
-        if (missionStarted === true && distance < 1) {
+        if (missionStarted === true && distance < 4) {
           console.log("Popup should show");
           console.log(missionStarted + " Mission has started");
+          console.log("Popup marker:", marker);
           setPopupMarker(marker);
           setShowArrivedPopup(true);
           setShownMarkers((prevShownMarkers) => ({
@@ -300,8 +309,11 @@ export default function App() {
 
   const [selectedMarkerDescription, setSelectedMarkerDescription] =
     useState("");
+  const [selectedMissionId, setSelectedMissionId] = useState(null);
 
   const handleMissionClick = (missionId) => {
+    setSelectedMissionId(missionId);
+
     setIsHeaderExpanded(false);
 
     const selectedMission = userMissions.find(
@@ -534,6 +546,15 @@ export default function App() {
         </View>
       )}
       <MapView style={styles.map} region={mapRegion} onPress={handleMapPress}>
+        {userLocation && (
+          <Circle
+            center={userLocation}
+            radius={10}
+            fillColor="#222"
+            strokeColor="#fff"
+            strokeWidth={2}
+          />
+        )}
         {/* Display markers */}
         {markers}
 
