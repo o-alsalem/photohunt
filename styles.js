@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
   },
   camera: {
-    zIndex: 2,
+    zIndex: 3,
     position: "absolute",
     left: 0,
     right: 0,

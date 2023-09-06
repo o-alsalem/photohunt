@@ -60,6 +60,9 @@ const firebaseConfig = {
 };
 
 export default function App() {
+  useEffect(() => {
+    requestCameraPermission();
+  }, []);
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const [cameraActive, setCameraActive] = useState(false);
@@ -412,6 +415,15 @@ export default function App() {
     setIsHeaderExpanded(!isHeaderExpanded);
   };
 
+  async function requestCameraPermission() {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    if (status === "granted") {
+      // You have the permission to use the camera
+    } else {
+      // Permission was denied
+      alert("Sorry, we need camera permissions to make this work!");
+    }
+  }
   return (
     <View style={styles.container}>
       {cameraActive && (
@@ -452,6 +464,16 @@ export default function App() {
           <Text style={styles.missionStartedText1}>
             Ta en bild på: {selectedMarkerDescription}
           </Text>
+        </View>
+      )}
+      {showArrivedPopup /* && popupMarker && popupMarker.id */ && (
+        <View style={styles.popupContainer}>
+          <Text style={styles.popupText}>
+            You arrived! Take a picture of {popupMarker.description}
+          </Text>
+          <TouchableOpacity style={styles.okButton} onPress={handlePopupOK}>
+            <Text style={styles.okText}>Ok</Text>
+          </TouchableOpacity>
         </View>
       )}
       {navigationStarted && startCoordinate && (
@@ -628,16 +650,6 @@ export default function App() {
         )}
       </MapView>
 
-      {showArrivedPopup && popupMarker && popupMarker.id && (
-        <View style={styles.popupContainer}>
-          <Text style={styles.popupText}>
-            You arrived! Take a picture of {popupMarker.description}
-          </Text>
-          <TouchableOpacity style={styles.okButton} onPress={handlePopupOK}>
-            <Text style={styles.okText}>Ok</Text>
-          </TouchableOpacity>
-        </View>
-      )}
       <View
         style={[
           styles.header,
