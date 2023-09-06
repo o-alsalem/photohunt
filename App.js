@@ -418,9 +418,7 @@ export default function App() {
   async function requestCameraPermission() {
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === "granted") {
-      // You have the permission to use the camera
     } else {
-      // Permission was denied
       alert("Sorry, we need camera permissions to make this work!");
     }
   }
