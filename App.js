@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"; // Import useState
 import MapView, { Marker, Polyline, Circle } from "react-native-maps";
 import ImagePicker from "react-native-image-picker";
+import * as MediaLibrary from "expo-media-library";
 
 import MapViewDirections from "react-native-maps-directions";
 import { Camera } from "expo-camera";
@@ -42,6 +43,7 @@ import {
   TextInput,
   ScrollView,
   ImageBackground,
+  Button,
 } from "react-native";
 
 // Import the functions you need from the SDKs you need
@@ -68,7 +70,7 @@ export default function App() {
   const [cameraActive, setCameraActive] = useState(false);
 
   const [profilePicture, setProfilePicture] = useState(
-    require("./assets/jag.jpg")
+    require("./assets/guest.png")
   );
   const [editProfilePicture, setEditProfilePicture] = useState(false);
 
@@ -78,6 +80,8 @@ export default function App() {
   const [password, setPassword] = useState(""); // Add password state
   const [showRegistration, setShowRegistration] = useState(false);
   const [userAuthenticated, setUserAuthenticated] = useState(false);
+
+  const [photoUri, setPhotoUri] = useState(null);
 
   const [userLocation, setUserLocation] = useState(null);
   const [mapRegion, setMapRegion] = useState(initialRegion);
@@ -112,7 +116,7 @@ export default function App() {
       if (marker && !shownMarkers[marker.id]) {
         const distance = calculateDistance(userLocation, marker.coordinate);
         console.log(`Distance to marker: ${distance}`);
-        if (missionStarted === true && distance < 4) {
+        if (missionStarted ) {
           console.log("Popup should show");
           console.log(missionStarted + " Mission has started");
           console.log("Popup marker:", marker);
@@ -415,7 +419,19 @@ export default function App() {
     setIsHeaderExpanded(!isHeaderExpanded);
   };
 
+  let cameraRef;
+
+  const takeAndSavePhoto = async () => {
+    if (cameraRef) {
+      let photo = await cameraRef.takePictureAsync();
+      const asset = await MediaLibrary.createAssetAsync(photo.uri);
+      await MediaLibrary.createAlbumAsync("MyApp", asset, false);
+      setPhotoUri(photo.uri); // Set the photoUri state variable
+    }
+  };
   async function requestCameraPermission() {
+    await MediaLibrary.requestPermissionsAsync();
+
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === "granted") {
     } else {
@@ -426,7 +442,7 @@ export default function App() {
     <View style={styles.container}>
       {cameraActive && (
         <View style={styles.camera}>
-          <Camera style={styles.camera1}>
+          <Camera style={styles.camera1} ref={(ref) => (cameraRef = ref)}>
             <View
               style={{
                 flex: 1,
@@ -435,6 +451,7 @@ export default function App() {
               }}
             >
               <TouchableOpacity
+                onPress={takeAndSavePhoto}
                 style={{
                   width: 70,
                   height: 70,
@@ -445,6 +462,20 @@ export default function App() {
               />
             </View>
           </Camera>
+        </View>
+      )}
+      {photoUri && (
+        <View style={styles.popupContainer2}>
+          <Text style={styles.goodJob}>Bra Jobbat!</Text>
+
+          <Image source={{ uri: photoUri }} style={styles.imagePreview} />
+          <Text style={styles.goodJob2}>Du har klarat 1 av 3 uppdrag</Text>
+
+          <Button
+            style={styles.okButton}
+            title="Fortsätt"
+            onPress={() => setPhotoUri(null)}
+          />
         </View>
       )}
       <View style={styles.homeWelcome}>
@@ -774,7 +805,7 @@ export default function App() {
           <View style={styles.center}>
             <TouchableOpacity style={styles.profilePicture}>
               <Image
-                source={require("./assets/jag.jpg")}
+                source={require("./assets/guest.png")}
                 style={styles.profileImage}
               />
             </TouchableOpacity>
@@ -884,7 +915,7 @@ export default function App() {
 
                   <View style={styles.myHuntsContainer}>
                     {userMissions
-                      .filter((mission) => mission.createdByUid === userUid) 
+                      .filter((mission) => mission.createdByUid === userUid)
                       .map((mission) => (
                         <TouchableOpacity
                           style={styles.myHunts}

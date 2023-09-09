@@ -583,6 +583,30 @@ const styles = StyleSheet.create({
   missionStartedText1: {
     paddingLeft: 20,
   },
+  popupContainer2: {
+    zIndex: 4,
+    position: "absolute",
+    top: "25%",
+    left: "5%",
+    height: "30%",
+    width: "90%",
+    backgroundColor: "#fff",
+    borderRadius: "30",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  imagePreview: {
+    width: 120,
+    height: 120,
+    borderRadius: "100%",
+  },
+  goodJob: {
+    fontSize: 30,
+  },
+  goodJob2: {
+    marginTop: "2%",
+    fontSize: 18,
+  },
 });
 
 export default styles;
