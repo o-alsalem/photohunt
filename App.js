@@ -883,17 +883,18 @@ export default function App() {
                   <Text style={styles.indentText2}>Planned Hunts:</Text>
 
                   <View style={styles.myHuntsContainer}>
-                    {userMissions.map((mission) => (
-                      <TouchableOpacity
-                        style={styles.myHunts}
-                        key={mission.id}
-                        onPress={() => handleMissionClick(mission.id)}
-                      >
-                        <Text style={styles.missionName}>{mission.name}</Text>
-                        <Text>{mission.description}</Text>
-                        {/* Add more mission details as needed */}
-                      </TouchableOpacity>
-                    ))}
+                    {userMissions
+                      .filter((mission) => mission.createdByUid === userUid) 
+                      .map((mission) => (
+                        <TouchableOpacity
+                          style={styles.myHunts}
+                          key={mission.id}
+                          onPress={() => handleMissionClick(mission.id)}
+                        >
+                          <Text style={styles.missionName}>{mission.name}</Text>
+                          <Text>{mission.description}</Text>
+                        </TouchableOpacity>
+                      ))}
                   </View>
 
                   <Text style={styles.indentText2}>Medals:</Text>
